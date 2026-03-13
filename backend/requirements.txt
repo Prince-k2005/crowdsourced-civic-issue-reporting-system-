@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+pydantic[email]
+pydantic-settings
+sqlalchemy[asyncio]
+asyncpg
+python-multipart
+python-jose[cryptography]
+alembic
+httpx
+cryptography
+supabase

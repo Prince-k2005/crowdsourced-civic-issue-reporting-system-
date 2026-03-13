@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+@layer base {
+    body {
+        @apply font-sans antialiased text-gray-900 bg-gray-50;
+    }
+}
+
+@layer components {
+    .btn-primary {
+        @apply bg-civic-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-civic-700 active:bg-civic-800 transition-all duration-200 shadow-lg shadow-civic-600/25 hover:shadow-xl hover:shadow-civic-600/30 disabled:opacity-50 disabled:cursor-not-allowed;
+    }
+
+    .btn-secondary {
+        @apply bg-white text-civic-700 px-6 py-3 rounded-xl font-semibold border-2 border-civic-200 hover:bg-civic-50 active:bg-civic-100 transition-all duration-200;
+    }
+
+    .btn-ghost {
+        @apply text-gray-600 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 active:bg-gray-200 transition-all duration-200;
+    }
+
+    .btn-danger {
+        @apply bg-red-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-red-600 transition-all duration-200 shadow-lg shadow-red-500/25;
+    }
+
+    .card {
+        @apply bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300;
+    }
+
+    .card-glass {
+        @apply bg-white/80 backdrop-blur-xl rounded-2xl border border-white/20 shadow-lg shadow-gray-900/5;
+    }
+
+    .input-field {
+        @apply w-full px-4 py-3 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-civic-500/40 focus:border-civic-500 placeholder:text-gray-400 transition-all duration-200;
+    }
+
+    .badge {
+        @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold;
+    }
+
+    .page-container {
+        @apply min-h-screen pb-24 md:pb-8;
+    }
+
+    .page-header {
+        @apply sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-gray-100 px-4 py-4;
+    }
+
+    .gradient-civic {
+        @apply bg-gradient-to-br from-civic-600 via-civic-700 to-civic-900;
+    }
+
+    .gradient-hero {
+        @apply bg-gradient-to-br from-civic-600 via-blue-600 to-indigo-700;
+    }
+}
+
+/* Leaflet map overrides */
+.leaflet-container {
+    z-index: 1;
+    border-radius: 1rem;
+}
