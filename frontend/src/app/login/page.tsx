@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Eye, EyeOff, Loader2, KeyRound } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { motion } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/lib/store';
 import { authAPI } from '@/lib/api';
@@ -41,21 +42,31 @@ export default function LoginPage() {
     return (
         <div className="min-h-screen flex">
             {/* Left: gradient panel */}
-            <div className="hidden lg:flex lg:w-1/2 gradient-hero items-center justify-center p-12">
+            <motion.div
+                initial={{ opacity: 0, x: -40 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6 }}
+                className="hidden lg:flex lg:w-1/2 gradient-hero hero-mesh items-center justify-center p-12"
+            >
                 <div className="max-w-md text-white">
-                    <div className="w-14 h-14 gradient-civic rounded-2xl flex items-center justify-center text-2xl font-bold mb-8 border-2 border-white/30">C</div>
-                    <h1 className="text-4xl font-display font-bold mb-4">Welcome back to CivicFlow</h1>
-                    <p className="text-white/70 text-lg">Continue making your city better, one report at a time.</p>
+                    <div className="w-14 h-14 gradient-civic rounded-2xl flex items-center justify-center text-2xl font-bold mb-8 border-2 border-white/30">R2</div>
+                    <h1 className="text-4xl font-display font-bold mb-4">Welcome back to Report2Resolve</h1>
+                    <p className="text-white/70 text-lg">Track, escalate, and resolve civic issues with transparency.</p>
                 </div>
-            </div>
+            </motion.div>
 
             {/* Right: form */}
-            <div className="flex-1 flex items-center justify-center p-6">
-                <div className="w-full max-w-md">
+            <motion.div
+                initial={{ opacity: 0, x: 24 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="flex-1 flex items-center justify-center p-6"
+            >
+                <div className="w-full max-w-md card p-6 md:p-8">
                     <div className="lg:hidden mb-8">
                         <Link href="/" className="flex items-center gap-2 mb-6">
-                            <div className="w-9 h-9 gradient-civic rounded-xl flex items-center justify-center text-white font-bold">C</div>
-                            <span className="font-display font-bold text-xl">CivicFlow</span>
+                            <div className="w-9 h-9 gradient-civic rounded-xl flex items-center justify-center text-white font-bold">R2</div>
+                            <span className="font-display font-bold text-xl">Report2Resolve</span>
                         </Link>
                     </div>
 
@@ -107,7 +118,7 @@ export default function LoginPage() {
                         Don&apos;t have an account? <Link href="/signup" className="text-civic-600 font-semibold hover:underline">Sign up</Link>
                     </p>
                 </div>
-            </div>
+            </motion.div>
         </div>
     );
 }

@@ -88,20 +88,30 @@ export default function AdminPage() {
     return (
         <div className="page-container">
             <div className="max-w-6xl mx-auto px-4 py-6">
-                <div className="flex items-center justify-between mb-8">
+                <motion.div
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.35 }}
+                    className="flex items-center justify-between mb-8"
+                >
                     <div>
-                        <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-                        <p className="text-gray-500">Manage and track civic reports</p>
+                        <h1 className="text-2xl font-bold">Report2Resolve Control Center</h1>
+                        <p className="text-gray-500">Manage incoming reports, assign departments, and drive resolution</p>
                     </div>
                     <div className="flex items-center gap-2">
                         <BarChart3 size={20} className="text-civic-600" />
                         <span className="text-xs font-medium px-2 py-1 rounded-full bg-purple-100 text-purple-700 capitalize">{user?.role}</span>
                     </div>
-                </div>
+                </motion.div>
 
                 {/* KPI Cards */}
                 {analytics && (
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    <motion.div
+                        initial={{ opacity: 0, y: 18 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: 0.05 }}
+                        className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
+                    >
                         {[
                             { label: 'Total Reports', value: analytics.total_reports, icon: '📋', color: 'from-blue-500 to-cyan-500' },
                             { label: 'Pending', value: analytics.by_status?.pending || 0, icon: '⏳', color: 'from-yellow-500 to-orange-500' },
@@ -109,6 +119,7 @@ export default function AdminPage() {
                             { label: 'Resolution Rate', value: `${analytics.resolution_rate}%`, icon: '📊', color: 'from-purple-500 to-pink-500' },
                         ].map((kpi, i) => (
                             <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
+                                whileHover={{ y: -3, scale: 1.01 }}
                                 className="card p-5">
                                 <div className="flex items-center justify-between mb-3">
                                     <span className="text-2xl">{kpi.icon}</span>
@@ -120,12 +131,17 @@ export default function AdminPage() {
                                 <div className="text-xs text-gray-500 mt-1">{kpi.label}</div>
                             </motion.div>
                         ))}
-                    </div>
+                    </motion.div>
                 )}
 
                 {/* Category breakdown */}
                 {analytics?.by_category && (
-                    <div className="card p-5 mb-8">
+                    <motion.div
+                        initial={{ opacity: 0, y: 18 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: 0.1 }}
+                        className="card p-5 mb-8"
+                    >
                         <h3 className="font-bold mb-4">Reports by Category</h3>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                             {Object.entries(analytics.by_category).map(([cat, count]: any) => {
@@ -141,11 +157,16 @@ export default function AdminPage() {
                                 );
                             })}
                         </div>
-                    </div>
+                    </motion.div>
                 )}
 
                 {/* Department Management */}
-                <div className="card p-5 mb-8">
+                <motion.div
+                    initial={{ opacity: 0, y: 18 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: 0.15 }}
+                    className="card p-5 mb-8"
+                >
                     <div className="flex items-center gap-2 mb-4">
                         <Building2 size={18} className="text-civic-600" />
                         <h3 className="font-bold">Department Management</h3>
@@ -174,10 +195,15 @@ export default function AdminPage() {
                             <Plus size={16} />{creatingDept ? 'Creating...' : 'Add'}
                         </button>
                     </div>
-                </div>
+                </motion.div>
 
                 {/* Reports table */}
-                <div className="card overflow-hidden">
+                <motion.div
+                    initial={{ opacity: 0, y: 18 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: 0.2 }}
+                    className="card overflow-hidden"
+                >
                     <div className="px-5 py-3 border-b border-gray-100">
                         <div className="flex flex-wrap items-center justify-between gap-3">
                             <h3 className="font-bold">All Reports ({total})</h3>
@@ -201,9 +227,9 @@ export default function AdminPage() {
                         </div>
                     </div>
 
-                    <div className="overflow-x-auto">
+                    <div className="overflow-x-auto max-h-[70vh]">
                         <table className="w-full text-sm">
-                            <thead className="bg-gray-50 text-left">
+                            <thead className="bg-gray-50/95 backdrop-blur sticky top-0 z-10 text-left border-b border-gray-100">
                                 <tr>
                                     <th className="px-4 py-3 font-medium text-gray-500">Issue</th>
                                     <th className="px-4 py-3 font-medium text-gray-500">Reporter</th>
@@ -222,9 +248,9 @@ export default function AdminPage() {
                                     const status = STATUS_CONFIG[r.status] || STATUS_CONFIG.pending;
                                     const urg = URGENCY_CONFIG[r.urgency] || URGENCY_CONFIG.medium;
                                     return (
-                                        <tr key={r.id} className="border-b border-gray-50 hover:bg-gray-50">
+                                        <tr key={r.id} className="border-b border-gray-50 hover:bg-civic-50/40 transition-colors duration-200">
                                             <td className="px-4 py-3">
-                                                <a href={`/reports/${r.id}`} className="font-medium text-gray-900 hover:text-civic-600 line-clamp-1 max-w-[180px] block">
+                                                <a href={`/reports/${r.id}`} className="font-medium text-gray-900 hover:text-civic-600 line-clamp-1 max-w-[180px] block transition-colors">
                                                     {r.title || r.description.slice(0, 40)}
                                                 </a>
                                             </td>
@@ -239,7 +265,7 @@ export default function AdminPage() {
                                                     value={r.assigned_department_id?.toString() || ''}
                                                     onChange={e => handleAssignDept(r.id, r.status, e.target.value)}
                                                     disabled={updating === r.id}
-                                                    className="text-xs border rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-civic-500/40 min-w-[120px]">
+                                                    className="text-xs border rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-civic-500/40 min-w-[120px] hover:border-civic-300 transition-colors">
                                                     <option value="">— Unassigned —</option>
                                                     {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
                                                 </select>
@@ -249,7 +275,7 @@ export default function AdminPage() {
                                             <td className="px-4 py-3">
                                                 <select value={r.status} onChange={e => handleStatusChange(r.id, e.target.value)}
                                                     disabled={updating === r.id}
-                                                    className="text-xs border rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-civic-500/40">
+                                                    className="text-xs border rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-civic-500/40 hover:border-civic-300 transition-colors">
                                                     {Object.entries(STATUS_CONFIG).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
                                                 </select>
                                             </td>
@@ -270,7 +296,7 @@ export default function AdminPage() {
                             <button onClick={() => setPage(p => p + 1)} disabled={page >= Math.ceil(total / 15)} className="btn-ghost text-xs">Next</button>
                         </div>
                     )}
-                </div>
+                </motion.div>
             </div>
         </div>
     );

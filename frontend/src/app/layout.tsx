@@ -15,8 +15,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     return (
         <html lang="en">
             <head>
-                <title>CivicFlow — Report Civic Issues</title>
-                <meta name="description" content="AI-driven civic issue reporting platform. Report potholes, garbage, broken lights and more." />
+                <title>Report2Resolve — Crowdsourced Civic Issue Reporting</title>
+                <meta name="description" content="Crowdsourced civic issue reporting and resolution system. Report, track, and resolve public issues faster." />
                 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </head>

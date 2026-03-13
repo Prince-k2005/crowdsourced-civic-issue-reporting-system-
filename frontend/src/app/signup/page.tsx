@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Loader2, KeyRound } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { motion } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/lib/store';
 import { authAPI } from '@/lib/api';
@@ -33,7 +34,7 @@ export default function SignupPage() {
             if (data.session) {
                 const profile = await authAPI.getMe();
                 setAuth(data.session.access_token, profile.data);
-                toast.success('Account created! Welcome to CivicFlow 🎉');
+                toast.success('Account created! Welcome to Report2Resolve');
                 router.push('/submit');
             } else {
                 toast.success('Check your email to confirm your account!');
@@ -48,25 +49,35 @@ export default function SignupPage() {
 
     return (
         <div className="min-h-screen flex">
-            <div className="hidden lg:flex lg:w-1/2 gradient-hero items-center justify-center p-12">
+            <motion.div
+                initial={{ opacity: 0, x: -40 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6 }}
+                className="hidden lg:flex lg:w-1/2 gradient-hero hero-mesh items-center justify-center p-12"
+            >
                 <div className="max-w-md text-white">
-                    <div className="w-14 h-14 gradient-civic rounded-2xl flex items-center justify-center text-2xl font-bold mb-8 border-2 border-white/30">C</div>
-                    <h1 className="text-4xl font-display font-bold mb-4">Join CivicFlow</h1>
-                    <p className="text-white/70 text-lg">Start reporting issues and earn rewards for making your community better.</p>
+                    <div className="w-14 h-14 gradient-civic rounded-2xl flex items-center justify-center text-2xl font-bold mb-8 border-2 border-white/30">R2</div>
+                    <h1 className="text-4xl font-display font-bold mb-4">Join Report2Resolve</h1>
+                    <p className="text-white/70 text-lg">Start reporting issues and help move them from report to resolution.</p>
                     <div className="mt-8 space-y-3">
                         {['🕳️ Report potholes & road damage', '🗑️ Flag garbage overflow', '💡 Report broken streetlights', '🏆 Earn points & badges'].map((item, i) => (
                             <div key={i} className="flex items-center gap-3 text-white/80">{item}</div>
                         ))}
                     </div>
                 </div>
-            </div>
+            </motion.div>
 
-            <div className="flex-1 flex items-center justify-center p-6">
-                <div className="w-full max-w-md">
+            <motion.div
+                initial={{ opacity: 0, x: 24 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="flex-1 flex items-center justify-center p-6"
+            >
+                <div className="w-full max-w-md card p-6 md:p-8">
                     <div className="lg:hidden mb-8">
                         <Link href="/" className="flex items-center gap-2 mb-6">
-                            <div className="w-9 h-9 gradient-civic rounded-xl flex items-center justify-center text-white font-bold">C</div>
-                            <span className="font-display font-bold text-xl">CivicFlow</span>
+                            <div className="w-9 h-9 gradient-civic rounded-xl flex items-center justify-center text-white font-bold">R2</div>
+                            <span className="font-display font-bold text-xl">Report2Resolve</span>
                         </Link>
                     </div>
 
@@ -103,7 +114,7 @@ export default function SignupPage() {
                         Already have an account? <Link href="/login" className="text-civic-600 font-semibold hover:underline">Sign in</Link>
                     </p>
                 </div>
-            </div>
+            </motion.div>
         </div>
     );
 }

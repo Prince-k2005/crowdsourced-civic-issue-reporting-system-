@@ -42,8 +42,10 @@ export default function MyReportsPage() {
     return (
         <div className="page-container">
             <div className="max-w-3xl mx-auto px-4 py-6">
-                <h1 className="text-2xl font-bold mb-1">{user ? 'My Reports' : 'All Reports'}</h1>
-                <p className="text-gray-500 mb-6">{total} total reports</p>
+                <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+                    <h1 className="text-2xl font-bold mb-1">{user ? 'My Reports' : 'Community Reports'}</h1>
+                    <p className="text-gray-500 mb-6">{total} total reports in Report2Resolve</p>
+                </motion.div>
 
                 {/* Filters */}
                 <div className="flex flex-col sm:flex-row gap-3 mb-6">
@@ -80,7 +82,7 @@ export default function MyReportsPage() {
                         const status = STATUS_CONFIG[r.status] || STATUS_CONFIG.pending;
                         const urg = URGENCY_CONFIG[r.urgency] || URGENCY_CONFIG.medium;
                         return (
-                            <motion.div key={r.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
+                            <motion.div key={r.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} whileHover={{ y: -2 }}>
                                 <Link href={`/reports/${r.id}`} className="card p-5 block hover:shadow-lg transition-all group">
                                     <div className="flex items-start gap-4">
                                         {r.image_urls?.[0] ? (

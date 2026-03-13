@@ -34,8 +34,8 @@ export function Navbar() {
         <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100">
             <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
                 <Link href="/" className="flex items-center gap-2">
-                    <div className="w-9 h-9 gradient-civic rounded-xl flex items-center justify-center text-white font-bold text-lg">C</div>
-                    <span className="font-display font-bold text-xl text-gray-900">CivicFlow</span>
+                    <div className="w-9 h-9 gradient-civic rounded-xl flex items-center justify-center text-white font-bold text-lg">R2</div>
+                    <span className="font-display font-bold text-xl text-gray-900">Report2Resolve</span>
                 </Link>
 
                 {/* Desktop nav */}

@@ -31,33 +31,34 @@ export default function LandingPage() {
 
             {/* Hero */}
             <section className="relative overflow-hidden">
-                <div className="gradient-hero text-white">
+                <div className="gradient-hero hero-mesh text-white">
+                    <div className="absolute inset-0 bg-slate-950/20" />
                     <div className="max-w-7xl mx-auto px-4 py-20 md:py-32 relative z-10">
                         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
                             className="max-w-3xl">
-                            <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm font-medium mb-6">
+                            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm font-semibold text-white mb-6">
                                 <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
                                 Making cities better, one report at a time
                             </div>
-                            <h1 className="text-4xl md:text-6xl font-display font-bold leading-tight mb-6">
-                                Your City.<br />Your Voice.<br />
-                                <span className="text-cyan-300">Real Impact.</span>
+                            <h1 className="text-4xl md:text-6xl font-display font-bold leading-tight mb-6 text-shadow-hero">
+                                Report2Resolve<br />
+                                <span className="brand-sheen">From Citizen Reports to Real Resolution</span>
                             </h1>
-                            <p className="text-lg md:text-xl text-white/80 mb-8 max-w-2xl">
-                                Report civic issues like potholes, broken lights, and garbage in seconds.
-                                Track progress and earn rewards for making your community better.
+                            <p className="text-lg md:text-xl text-white/95 mb-8 max-w-2xl text-shadow-soft">
+                                Crowdsource civic issue reporting with proof, routing, and transparent updates.
+                                Turn every report into accountable action.
                             </p>
                             <div className="flex flex-wrap gap-4">
                                 {user ? (
-                                    <Link href="/submit" className="bg-white text-civic-700 px-8 py-4 rounded-2xl font-bold text-lg hover:bg-gray-100 transition-all shadow-xl flex items-center gap-2">
+                                    <Link href="/submit" className="bg-white text-civic-700 px-8 py-4 rounded-2xl font-bold text-lg hover:bg-gray-100 transition-all shadow-xl hover:-translate-y-1 flex items-center gap-2">
                                         Report an Issue <ArrowRight size={20} />
                                     </Link>
                                 ) : (
                                     <>
-                                        <Link href="/signup" className="bg-white text-civic-700 px-8 py-4 rounded-2xl font-bold text-lg hover:bg-gray-100 transition-all shadow-xl flex items-center gap-2">
+                                        <Link href="/signup" className="bg-white text-civic-700 px-8 py-4 rounded-2xl font-bold text-lg hover:bg-gray-100 transition-all shadow-xl hover:-translate-y-1 flex items-center gap-2">
                                             Get Started <ArrowRight size={20} />
                                         </Link>
-                                        <Link href="/map" className="bg-white/15 backdrop-blur-sm text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-white/25 transition-all border border-white/20">
+                                        <Link href="/map" className="bg-white/20 backdrop-blur-sm text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-white/30 transition-all hover:-translate-y-1 border border-white/35">
                                             View Live Map
                                         </Link>
                                     </>
@@ -66,9 +67,9 @@ export default function LandingPage() {
                         </motion.div>
                     </div>
                     {/* Background decoration */}
-                    <div className="absolute top-0 right-0 w-1/2 h-full opacity-10">
-                        <div className="absolute top-20 right-20 w-72 h-72 bg-white rounded-full blur-3xl" />
-                        <div className="absolute bottom-20 right-40 w-96 h-96 bg-cyan-300 rounded-full blur-3xl" />
+                    <div className="absolute top-0 right-0 w-1/2 h-full opacity-20 pointer-events-none">
+                        <div className="absolute top-20 right-20 w-72 h-72 bg-white rounded-full blur-3xl float-soft" />
+                        <div className="absolute bottom-20 right-40 w-96 h-96 bg-cyan-300 rounded-full blur-3xl float-soft" style={{ animationDelay: '0.8s' }} />
                     </div>
                 </div>
             </section>
@@ -95,7 +96,7 @@ export default function LandingPage() {
             {/* Features */}
             <section className="max-w-7xl mx-auto px-4 py-20">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-4">How CivicFlow Works</h2>
+                    <h2 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-4">How Report2Resolve Works</h2>
                     <p className="text-gray-500 text-lg max-w-2xl mx-auto">A powerful platform connecting citizens with city officials for faster issue resolution</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -123,7 +124,7 @@ export default function LandingPage() {
                     <div className="relative z-10">
                         <Users className="mx-auto mb-4" size={48} />
                         <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">Ready to improve your city?</h2>
-                        <p className="text-white/80 text-lg mb-8 max-w-xl mx-auto">Join thousands of citizens making a real difference in their communities.</p>
+                        <p className="text-white/90 text-lg mb-8 max-w-xl mx-auto text-shadow-soft">Join thousands of citizens making a real difference in their communities.</p>
                         <Link href={user ? '/submit' : '/signup'}
                             className="inline-flex items-center gap-2 bg-white text-civic-700 px-8 py-4 rounded-2xl font-bold text-lg hover:bg-gray-100 transition-all shadow-xl">
                             {user ? 'Report Now' : 'Sign Up Free'} <ArrowRight size={20} />
@@ -134,8 +135,8 @@ export default function LandingPage() {
 
             {/* Footer */}
             <footer className="border-t border-gray-200 bg-white py-8">
-                <div className="max-w-7xl mx-auto px-4 text-center text-gray-400 text-sm">
-                    <p>&copy; 2026 CivicFlow. Built for better cities.</p>
+                <div className="max-w-7xl mx-auto px-4 text-center text-gray-500 text-sm">
+                    <p>&copy; 2026 Report2Resolve. Built for better cities.</p>
                 </div>
             </footer>
         </div>
