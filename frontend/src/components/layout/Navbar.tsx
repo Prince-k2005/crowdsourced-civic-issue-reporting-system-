@@ -22,13 +22,18 @@ export function Navbar() {
         }
     }, [user, pathname]);
 
-    const navLinks = user ? [
-        { href: '/submit', label: 'Report Issue' },
-        { href: '/map', label: 'Live Map' },
-        { href: '/reports', label: 'My Reports' },
-        { href: '/leaderboard', label: 'Leaderboard' },
-        ...(user.role === 'admin' || user.role === 'moderator' ? [{ href: '/admin', label: 'Admin' }] : []),
-    ] : [];
+    const isAdmin = user?.role === 'admin' || user?.role === 'moderator';
+
+    const navLinks = user ? (
+        isAdmin
+            ? [{ href: '/admin', label: 'Admin Dashboard' }]
+            : [
+                { href: '/submit', label: 'Report Issue' },
+                { href: '/map', label: 'Live Map' },
+                { href: '/reports', label: 'My Reports' },
+                { href: '/leaderboard', label: 'Leaderboard' },
+            ]
+    ) : [];
 
     return (
         <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100">
