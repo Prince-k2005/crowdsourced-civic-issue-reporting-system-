@@ -2,7 +2,6 @@ import uuid
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Annotated
-
 from schemas import ReportResponse, ReportStatus
 from ai_service import ai_service
 
