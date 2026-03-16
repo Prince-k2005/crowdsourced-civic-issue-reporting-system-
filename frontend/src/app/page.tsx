@@ -31,8 +31,8 @@ export default function LandingPage() {
 
             {/* Hero */}
             <section className="relative overflow-hidden">
-                <div className="gradient-hero hero-mesh text-white">
-                    <div className="absolute inset-0 bg-slate-950/20" />
+                <div className="relative bg-gradient-to-br from-indigo-600 via-cyan-600 to-blue-700 text-white">
+                    <div className="absolute inset-0 bg-slate-950/5" />
                     <div className="max-w-7xl mx-auto px-4 py-20 md:py-32 relative z-10">
                         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
                             className="max-w-3xl">

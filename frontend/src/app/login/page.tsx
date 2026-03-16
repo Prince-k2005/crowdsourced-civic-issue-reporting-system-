@@ -31,7 +31,8 @@ export default function LoginPage() {
             const profile = await authAPI.getMe();
             setAuth(data.session!.access_token, profile.data);
             toast.success('Welcome back!');
-            router.push('/submit');
+            const isAdmin = profile.data.role === 'admin' || profile.data.role === 'moderator';
+            router.push(isAdmin ? '/admin' : '/submit');
         } catch (err: any) {
             toast.error(err.message || 'Login failed');
         } finally {
