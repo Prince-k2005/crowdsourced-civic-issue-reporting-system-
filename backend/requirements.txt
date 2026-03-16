@@ -10,3 +10,6 @@ alembic
 httpx
 cryptography
 supabase
+langchain-groq 
+langgraph
+langchain-core

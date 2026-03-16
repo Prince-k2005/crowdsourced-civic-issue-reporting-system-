@@ -6,7 +6,7 @@ import os
 
 from app.config import get_settings
 from app.database import engine
-from app.routers import auth, reports, admin, leaderboard, notifications
+from app.routers import auth, reports, admin, leaderboard, notifications, ai_admin
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -49,6 +49,7 @@ app.include_router(reports.router)
 app.include_router(admin.router)
 app.include_router(leaderboard.router)
 app.include_router(notifications.router)
+app.include_router(ai_admin.router)
 
 
 @app.get("/")

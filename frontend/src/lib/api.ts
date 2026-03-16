@@ -60,6 +60,7 @@ export const adminAPI = {
     listDepartments: () => api.get('/api/admin/departments'),
     createDepartment: (name: string, slug: string) =>
         api.post('/api/admin/departments', null, { params: { name, slug } }),
+    aiPrioritize: () => api.post('/api/admin/ai/prioritize'),
 };
 
 // ── Leaderboard ──

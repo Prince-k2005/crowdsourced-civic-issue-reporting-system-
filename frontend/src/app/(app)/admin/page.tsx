@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { BarChart3, Building2, Plus } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { BarChart3, Building2, Plus, Sparkles, ChevronDown, ChevronUp, RefreshCw } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { adminAPI } from '@/lib/api';
 import { useAuthStore } from '@/lib/store';
@@ -23,6 +23,11 @@ export default function AdminPage() {
     const [departments, setDepartments] = useState<any[]>([]);
     const [newDeptName, setNewDeptName] = useState('');
     const [creatingDept, setCreatingDept] = useState(false);
+
+    // AI Prioritization state
+    const [aiExpanded, setAiExpanded] = useState(false);
+    const [aiAnalyzing, setAiAnalyzing] = useState(false);
+    const [aiResults, setAiResults] = useState<any[] | null>(null);
 
     const fetchReports = async (p = page) => {
         const params: any = { page: p, per_page: 15 };
@@ -83,6 +88,24 @@ export default function AdminPage() {
             setNewDeptName('');
         } catch { toast.error('Failed to create department'); }
         finally { setCreatingDept(false); }
+    };
+
+    const handleAIPrioritize = async () => {
+        setAiAnalyzing(true);
+        if (!aiExpanded) setAiExpanded(true);
+        try {
+            const res = await adminAPI.aiPrioritize();
+            setAiResults(res.data.ranked);
+            if (res.data.ranked.length > 0) {
+                toast.success(`Analyzed ${res.data.total_analyzed} reports with AI`);
+            } else {
+                toast('No pending reports to analyze', { icon: 'ℹ️' });
+            }
+        } catch (err: any) {
+            toast.error(err.response?.data?.detail || 'AI analysis failed');
+        } finally {
+            setAiAnalyzing(false);
+        }
     };
 
     return (
@@ -195,6 +218,113 @@ export default function AdminPage() {
                             <Plus size={16} />{creatingDept ? 'Creating...' : 'Add'}
                         </button>
                     </div>
+                </motion.div>
+
+                {/* AI Priority Triage */}
+                <motion.div
+                    initial={{ opacity: 0, y: 18 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: 0.18 }}
+                    className="card mb-8 overflow-hidden bg-gradient-to-br from-indigo-50/50 to-purple-50/30 border-indigo-100/50"
+                >
+                    <div 
+                        className="px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-white/50 transition-colors"
+                        onClick={() => setAiExpanded(!aiExpanded)}
+                    >
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center shadow-md shadow-indigo-500/20">
+                                <Sparkles size={20} />
+                            </div>
+                            <div>
+                                <h3 className="font-bold text-gray-900">AI Priority Triage</h3>
+                                <p className="text-xs text-gray-500">Auto-analyze pending reports to surface the most critical issues</p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <button 
+                                onClick={(e) => { e.stopPropagation(); handleAIPrioritize(); }}
+                                disabled={aiAnalyzing}
+                                className="btn-primary text-sm !py-2 flex items-center gap-2 shadow-indigo-500/20"
+                            >
+                                {aiAnalyzing ? <RefreshCw size={16} className="animate-spin" /> : <Sparkles size={16} />}
+                                {aiAnalyzing ? 'Analyzing...' : aiResults ? 'Re-analyze' : 'Run Analysis'}
+                            </button>
+                            <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-black/5 rounded-lg transition-colors">
+                                {aiExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                            </button>
+                        </div>
+                    </div>
+
+                    <AnimatePresence>
+                        {aiExpanded && (
+                            <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                className="border-t border-indigo-100/50"
+                            >
+                                <div className="p-5 max-h-[500px] overflow-y-auto">
+                                    {aiAnalyzing ? (
+                                        <div className="py-12 flex flex-col items-center justify-center text-center">
+                                            <div className="w-12 h-12 border-4 border-indigo-100 border-t-indigo-500 rounded-full animate-spin mb-4" />
+                                            <p className="font-medium text-indigo-900">Grok is analyzing reports...</p>
+                                            <p className="text-sm text-indigo-600/70 mt-1">Evaluating urgency, age, upvotes, and public safety impact</p>
+                                        </div>
+                                    ) : aiResults && aiResults.length > 0 ? (
+                                        <div className="space-y-3">
+                                            {aiResults.map((r, i) => {
+                                                const urgency = URGENCY_CONFIG[r.urgency] || URGENCY_CONFIG.medium;
+                                                const scoreColor = 
+                                                    r.priority_score >= 8 ? 'bg-red-100 text-red-700 border-red-200' : 
+                                                    r.priority_score >= 5 ? 'bg-amber-100 text-amber-700 border-amber-200' : 'bg-green-100 text-green-700 border-green-200';
+                                                
+                                                return (
+                                                    <div key={r.id} className="bg-white p-4 rounded-xl border border-indigo-50 shadow-sm flex flex-col md:flex-row gap-4 items-start md:items-center group hover:shadow-md transition-all">
+                                                        <div className={`flex-shrink-0 w-12 h-12 rounded-xl flex flex-col items-center justify-center border font-bold ${scoreColor}`}>
+                                                            <span className="text-xl leading-none">{r.priority_score}</span>
+                                                            <span className="text-[9px] uppercase tracking-wider opacity-80">Score</span>
+                                                        </div>
+                                                        <div className="flex-1 min-w-0">
+                                                            <div className="flex flex-wrap items-center gap-2 mb-1">
+                                                                <a href={`/reports/${r.id}`} className="font-bold text-gray-900 hover:text-indigo-600 transition-colors truncate">
+                                                                    {r.title}
+                                                                </a>
+                                                                <span className={cn('text-[10px] uppercase font-bold px-2 py-0.5 rounded-full', urgency.bg, urgency.color)}>
+                                                                    {urgency.label}
+                                                                </span>
+                                                                <span className="text-xs text-gray-500 ml-auto whitespace-nowrap">
+                                                                    {timeAgo(r.created_at)}
+                                                                </span>
+                                                            </div>
+                                                            <p className="text-sm text-gray-600 leading-snug">
+                                                                <span className="font-medium text-indigo-600/80 mr-1">AI Reason:</span>
+                                                                {r.reason}
+                                                            </p>
+                                                            {r.suggested_department && (
+                                                                <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-indigo-50 text-indigo-700 text-xs font-medium">
+                                                                    🏢 Suggestion: {r.suggested_department}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <div className="flex-shrink-0 w-full md:w-auto">
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    ) : aiResults ? (
+                                        <div className="py-8 text-center text-gray-400">
+                                            No pending reports found for prioritization.
+                                        </div>
+                                    ) : (
+                                        <div className="py-8 text-center text-gray-400">
+                                            Click "Run Analysis" to prioritize reports.
+                                        </div>
+                                    )}
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </motion.div>
 
                 {/* Reports table */}
