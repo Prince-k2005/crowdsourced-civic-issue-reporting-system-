@@ -143,7 +143,13 @@ export default function SubmitReportPage() {
                                 <input ref={fileRef} type="file" accept="image/*" capture="environment" onChange={handleFileChange} className="hidden" />
                                 {preview ? (
                                     <div className="relative rounded-2xl overflow-hidden">
-                                        <img src={preview} alt="Preview" className="w-full h-64 object-cover" />
+                                        <div className="w-full flex justify-center bg-gray-100 rounded-2xl overflow-hidden">
+                                            <img
+                                                src={preview}
+                                                alt="Preview"
+                                                className="max-w-full h-auto max-h-[400px] object-contain"
+                                            />
+                                            </div>
                                         <button onClick={() => { setFile(null); setPreview(''); }}
                                             className="absolute top-3 right-3 p-2 bg-black/50 rounded-full text-white hover:bg-black/70">
                                             <X size={16} />
@@ -250,7 +256,15 @@ export default function SubmitReportPage() {
                                     <p className="text-gray-600">{form.description}</p>
                                     {form.address && <p className="text-sm text-gray-500">📍 {form.address}</p>}
                                     <p className="text-xs text-gray-400">Location: {form.latitude.toFixed(4)}, {form.longitude.toFixed(4)}</p>
-                                    {preview && <img src={preview} alt="Preview" className="rounded-xl w-full h-40 object-cover" />}
+                                    {preview && (
+                                    <div className="w-full flex justify-center bg-gray-100 rounded-xl overflow-hidden">
+                                        <img
+                                        src={preview}
+                                        alt="Preview"
+                                        className="max-w-full h-auto max-h-[300px] object-contain"
+                                        />
+                                    </div>
+                                    )}
                                 </div>
                             </div>
                         )}

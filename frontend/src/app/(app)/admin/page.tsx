@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BarChart3, Building2, Plus, Sparkles, ChevronDown, ChevronUp, RefreshCw } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -29,7 +29,8 @@ export default function AdminPage() {
     const [aiAnalyzing, setAiAnalyzing] = useState(false);
     const [aiResults, setAiResults] = useState<any[] | null>(null);
 
-    const fetchReports = async (p = page) => {
+    // Replace your current fetchReports function with this:
+    const fetchReports = useCallback(async (p = page) => {
         const params: any = { page: p, per_page: 15 };
         if (statusFilter) params.status = statusFilter;
         if (categoryFilter) params.category = categoryFilter;
@@ -37,7 +38,7 @@ export default function AdminPage() {
         const res = await adminAPI.listReports(params);
         setReports(res.data.reports);
         setTotal(res.data.total);
-    };
+    }, [page, statusFilter, categoryFilter, urgencyFilter]);
 
     useEffect(() => {
         if (user && user.role !== 'admin' && user.role !== 'moderator') {
@@ -49,22 +50,32 @@ export default function AdminPage() {
     }, [user]);
 
     useEffect(() => {
-        fetchReports(page).catch(() => { });
-    }, [page, statusFilter, categoryFilter, urgencyFilter]);
+    fetchReports(page).catch(() => {});
+    }, [fetchReports]); 
 
     const handleStatusChange = async (reportId: string, newStatus: string) => {
         setUpdating(reportId);
+        // Optimistic update — reflect change immediately in the table
+        setReports(prev => prev.map(r => r.id === reportId ? { ...r, status: newStatus } : r));
         try {
             await adminAPI.updateStatus(reportId, { status: newStatus });
             toast.success(`Status → ${newStatus}`);
             await fetchReports();
-            adminAPI.getAnalytics().then(r => setAnalytics(r.data)).catch(() => { });
-        } catch { toast.error('Failed to update'); }
-        finally { setUpdating(null); }
+            adminAPI.getAnalytics().then(r => setAnalytics(r.data)).catch(() => {});
+        } catch {
+            toast.error('Failed to update');
+            await fetchReports(); // revert on error
+        } finally {
+            setUpdating(null);
+        }
     };
 
     const handleAssignDept = async (reportId: string, currentStatus: string, deptId: string) => {
         setUpdating(reportId);
+        // Optimistic update
+        setReports(prev => prev.map(r =>
+            r.id === reportId ? { ...r, assigned_department_id: deptId ? Number(deptId) : null } : r
+        ));
         try {
             await adminAPI.updateStatus(reportId, {
                 status: currentStatus,
@@ -72,8 +83,12 @@ export default function AdminPage() {
             });
             toast.success('Department assigned');
             await fetchReports();
-        } catch { toast.error('Failed to assign department'); }
-        finally { setUpdating(null); }
+        } catch {
+            toast.error('Failed to assign department');
+            await fetchReports(); // revert on error
+        } finally {
+            setUpdating(null);
+        }
     };
 
     const handleCreateDept = async () => {

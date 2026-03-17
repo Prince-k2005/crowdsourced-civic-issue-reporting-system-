@@ -105,9 +105,13 @@ export default function ReportDetailPage() {
                     </div>
 
                     {/* Image */}
-                    {report.image_urls?.[0] && (
-                        <img src={`${process.env.NEXT_PUBLIC_API_URL}${report.image_urls[0]}`} alt="Issue" className="w-full h-64 object-cover rounded-2xl mb-6" />
-                    )}
+                    <div className="w-full mb-6 flex justify-center">
+                    <img
+                        src={`${process.env.NEXT_PUBLIC_API_URL}${report.image_urls[0]}`}
+                        alt="Issue"
+                        className="max-w-full h-auto max-h-[500px] object-contain rounded-2xl"
+                    />
+                    </div>
 
                     {/* Description */}
                     <div className="card p-6 mb-6">

@@ -5,6 +5,7 @@ from typing import Optional, List
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, desc, case
+from sqlalchemy.orm import joinedload
 
 from app.database import get_db
 from app.config import get_settings
@@ -66,6 +67,13 @@ async def _save_upload(file: UploadFile) -> str:
     return f"/uploads/{filename}"
 
 
+# Reusable eager-load options for any Report query fed into _build_report_response
+_REPORT_OPTIONS = [
+    joinedload(Report.reporter),
+    joinedload(Report.department),
+]
+
+
 @router.post("", response_model=ReportResponse)
 async def create_report(
     description: str = Form(...),
@@ -115,7 +123,13 @@ async def create_report(
     )
     db.add(history)
 
-    await db.refresh(report)
+    await db.commit()
+
+    # Re-fetch with relationships eagerly loaded
+    result = await db.execute(
+        select(Report).options(*_REPORT_OPTIONS).where(Report.id == report.id)
+    )
+    report = result.scalar_one()
     return _build_report_response(report)
 
 
@@ -131,7 +145,7 @@ async def list_reports(
     db: AsyncSession = Depends(get_db),
 ):
     """List reports with pagination and filters."""
-    query = select(Report).options()
+    query = select(Report).options(*_REPORT_OPTIONS)
     count_query = select(func.count(Report.id))
 
     if status:
@@ -181,7 +195,11 @@ async def my_reports(
     db: AsyncSession = Depends(get_db),
 ):
     """Get current user's reports."""
-    query = select(Report).where(Report.reporter_id == user.id)
+    query = (
+        select(Report)
+        .options(*_REPORT_OPTIONS)
+        .where(Report.reporter_id == user.id)
+    )
     count_query = select(func.count(Report.id)).where(Report.reporter_id == user.id)
 
     total_result = await db.execute(count_query)
@@ -204,7 +222,9 @@ async def get_report(
     db: AsyncSession = Depends(get_db),
 ):
     """Get a single report by ID."""
-    result = await db.execute(select(Report).where(Report.id == report_id))
+    result = await db.execute(
+        select(Report).options(*_REPORT_OPTIONS).where(Report.id == report_id)
+    )
     report = result.scalar_one_or_none()
     if not report:
         raise HTTPException(status_code=404, detail="Report not found")
@@ -303,6 +323,7 @@ async def get_comments(
     """Get all comments on a report."""
     result = await db.execute(
         select(Comment)
+        .options(joinedload(Comment.user))
         .where(Comment.report_id == report_id)
         .order_by(Comment.created_at)
     )
