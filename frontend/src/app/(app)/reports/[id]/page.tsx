@@ -10,7 +10,8 @@ import { useAuthStore } from '@/lib/store';
 import { CATEGORIES, STATUS_CONFIG, URGENCY_CONFIG, cn, timeAgo, formatDate } from '@/lib/utils';
 
 export default function ReportDetailPage() {
-    const { id } = useParams<{ id: string }>();
+    const params = useParams();
+    const id = Array.isArray(params?.id) ? params.id[0] : params?.id ?? '';
     const { user } = useAuthStore();
     const [report, setReport] = useState<any>(null);
     const [comments, setComments] = useState<any[]>([]);
