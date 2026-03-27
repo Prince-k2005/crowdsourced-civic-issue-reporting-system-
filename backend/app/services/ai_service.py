@@ -170,3 +170,127 @@ async def prioritize_reports(reports: list[dict]) -> dict:
         None, graph.invoke, initial_state
     )
     return {"ranked": result["ranked"], "error": result.get("error")}
+
+
+async def assign_department_for_report(
+    title: str,
+    description: str,
+    category: str,
+    urgency: str,
+    available_departments: list[dict],
+) -> dict:
+    """
+    AI agent to intelligently assign a report to the most appropriate department.
+    
+    Args:
+        title: Report title
+        description: Report description
+        category: Report category (pothole, sanitation, etc.)
+        urgency: Urgency level (critical, high, medium, low)
+        available_departments: List of dicts with {"id": int, "name": str, "auto_assign_categories": list}
+    
+    Returns:
+        {
+            "department_id": int,
+            "department_name": str,
+            "confidence": float (0.0-1.0),
+            "reasoning": str,
+            "error": str | None
+        }
+    """
+    if not available_departments:
+        return {
+            "department_id": None,
+            "department_name": None,
+            "confidence": 0.0,
+            "reasoning": "No departments available",
+            "error": "No departments found in system",
+        }
+
+    # Build departments description for the LLM
+    dept_descriptions = []
+    for dept in available_departments:
+        categories = ", ".join(dept.get("auto_assign_categories", []))
+        dept_descriptions.append(
+            f"- {dept['name']} (handles: {categories or 'general'})"
+        )
+    dept_text = "\n".join(dept_descriptions)
+
+    prompt = f"""You are a civic issue routing AI. Route this civic report to the BEST matching department.
+
+Report Details:
+- Title: {title}
+- Description: {description}
+- Category: {category}
+- Urgency: {urgency}
+
+Available Departments:
+{dept_text}
+
+Respond with ONLY a JSON object (no markdown, no extra text):
+{{
+  "department_name": "<exact department name from the list>",
+  "confidence": <float 0.0 to 1.0>,
+  "reasoning": "<brief reason why this department>"
+}}
+
+Choose the department that best handles this type of issue. If the category matches a department's auto_assign_categories, prefer that. Be strict - match exactly to one of the departments listed."""
+
+    try:
+        llm = get_llm()
+        response = llm.invoke([HumanMessage(content=prompt)])
+        content = response.content.strip()
+
+        # Strip markdown code fences if present
+        if content.startswith("```"):
+            content = content.split("```")[1]
+            if content.startswith("json"):
+                content = content[4:]
+        if content.endswith("```"):
+            content = content[:-3]
+
+        result = json.loads(content)
+        department_name = result.get("department_name")
+        confidence = result.get("confidence", 0.0)
+        reasoning = result.get("reasoning", "")
+
+        # Find the matching department by name
+        matching_dept = None
+        for dept in available_departments:
+            if dept["name"].lower() == department_name.lower():
+                matching_dept = dept
+                break
+
+        if not matching_dept:
+            return {
+                "department_id": None,
+                "department_name": None,
+                "confidence": 0.0,
+                "reasoning": f"LLM returned invalid department name: {department_name}",
+                "error": f"Department '{department_name}' not found in system",
+            }
+
+        return {
+            "department_id": matching_dept["id"],
+            "department_name": matching_dept["name"],
+            "confidence": float(confidence),
+            "reasoning": reasoning,
+            "error": None,
+        }
+
+    except json.JSONDecodeError as e:
+        return {
+            "department_id": None,
+            "department_name": None,
+            "confidence": 0.0,
+            "reasoning": "",
+            "error": f"Failed to parse LLM response: {str(e)}",
+        }
+    except Exception as e:
+        return {
+            "department_id": None,
+            "department_name": None,
+            "confidence": 0.0,
+            "reasoning": "",
+            "error": str(e),
+        }

@@ -50,8 +50,12 @@ export default function AdminPage() {
     }, [user]);
 
     useEffect(() => {
-    fetchReports(page).catch(() => {});
-    }, [fetchReports]); 
+        const interval = setInterval(() => {
+            fetchReports(page).catch(() => {});
+        }, 1000); // every 5 seconds
+
+        return () => clearInterval(interval); // cleanup when component unmounts
+    }, [fetchReports, page]);
 
     const handleStatusChange = async (reportId: string, newStatus: string) => {
         setUpdating(reportId);
