@@ -87,7 +87,7 @@ async def create_report(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Submit a new civic issue report with optional image."""
+    """Submit a new civic issue report with optional image. Department will be assigned during AI Priority Triage."""
     image_urls = []
     if image:
         url = await _save_upload(image)
@@ -119,7 +119,7 @@ async def create_report(
         old_status=None,
         new_status="pending",
         changed_by_id=user.id,
-        comment="Report submitted",
+        comment="Report submitted. Awaiting AI Priority Triage.",
     )
     db.add(history)
 
